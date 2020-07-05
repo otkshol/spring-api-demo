@@ -3,6 +3,8 @@ package com.example.springapidemo.application.controller;
 import com.example.springapidemo.application.resource.UserBody;
 import com.example.springapidemo.domain.object.User;
 import com.example.springapidemo.domain.service.UserService;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,10 @@ public class UserController {
      * @param id 検索したいユーザID
      * @return ユーザ
      */
+    @ApiResponses({
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 500, message = "Internal Server Error"),
+    })
     @GetMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public User findById(@PathVariable("id") String id) {
