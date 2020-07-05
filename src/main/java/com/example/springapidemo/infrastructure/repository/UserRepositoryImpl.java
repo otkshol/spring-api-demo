@@ -1,11 +1,12 @@
 package com.example.springapidemo.infrastructure.repository;
 
+import com.example.springapidemo.domain.exception.NotFoundException;
 import com.example.springapidemo.domain.object.User;
 import com.example.springapidemo.domain.repository.UserRepository;
 import com.example.springapidemo.infrastructure.entity.UserEntity;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -26,8 +27,9 @@ public class UserRepositoryImpl implements UserRepository {
      */
     @Override
     public Optional<User> findById(String id) {
-        return this.userJpaRepository.findById(id)
-                .map(UserEntity::toDomainUser);
+        return Optional.ofNullable(this.userJpaRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(id + " is not found."))
+                .toDomainUser());
     }
 
     /**
@@ -44,6 +46,11 @@ public class UserRepositoryImpl implements UserRepository {
      */
     @Override
     public void deleteById(String id) {
-        this.userJpaRepository.deleteById(id);
+        try {
+            this.userJpaRepository.deleteById(id);
+        } catch (EmptyResultDataAccessException e) {
+            // 削除しようとしたIDが存在しない
+            throw new NotFoundException(e.getMessage());
+        }
     }
 }
