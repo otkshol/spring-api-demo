@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/<SchemaName>
+    url: jdbc:mysql://localhost:3306/springdemodb
     username: root
     password:
 
